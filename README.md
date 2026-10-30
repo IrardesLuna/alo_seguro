@@ -4,7 +4,7 @@
 
 🚧 **Projeto em desenvolvimento.** Este README é temporário e será atualizado ao longo do semestre.
 
-Projeto do **Grupo 5 (Squad 05 · Antinários)**, disciplina Fundamentos de Projetos 1 · CESAR School 2026.2.
+Projeto do **Grupo 5 (Squad 05)**, disciplina Projetos 1 · CESAR School 2026.2.
 
 ---
 
