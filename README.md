@@ -1,4 +1,4 @@
-# <img src="public/logo-grupo5-avatar.png" alt="Logo Alô Seguro" width="40" align="center"> Alô Seguro
+# Alô Seguro
 
 > Verificador de exposição de dados: descubra se seu e-mail ou telefone apareceu em vazamentos conhecidos e saiba o que fazer.
 
