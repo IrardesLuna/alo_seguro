@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alô Seguro</title>
+    <link rel="icon" type="image/png" href="logo-grupo5-avatar.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+    <link rel="stylesheet" href="proj1.css">
+    <script src="proj1.js" defer></script>
+</head>
+<body data-font-size="3">
+
+<main class="app">
+  <div class="brand">
+    <div class="brand-mark">
+      <img src="logo-grupo5-avatar.png" alt="" width="40" height="40">
+    </div>
+    <div>
+      <h1>Alô Seguro</h1>
+      <p class="sr-only">Ferramenta de verificação de exposição de dados: informe nome, e-mail e telefone para checar se aparecem em vazamentos conhecidos, com orientações de segurança.</p>
+      <span>Verificador de exposição de dados</span>
+    </div>
+  </div>
+
+  <p class="intro">Verifique se seu e-mail ou telefone já apareceu em vazamentos de dados conhecidos. Se algo for encontrado, mostramos onde e o que fazer a seguir.</p>
+
+  <div class="demo-note">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
+    <span>Este protótipo roda em <strong style="color:var(--text-primary); font-weight:500">modo demonstração</strong>, com uma base local de exemplo — ele não consulta a internet neste momento. Para testar um resultado positivo, use <code>teste@exemplo.com</code> ou o telefone <code>(11) 99999-9999</code>. Em produção, a checagem real deve ser feita no servidor, consultando uma base como o Have I Been Pwned, sem expor chaves de API no navegador.</span>
+  </div>
+
+  <div class="card">
+    <form id="scan-form" novalidate>
+      <div class="field">
+        <label for="f-nome">Nome completo</label>
+        <input type="text" id="f-nome" aria-describedby="err-nome" aria-invalid="false" required autocomplete="name" placeholder="Ex.: Maria da Silva Santos">
+        <div class="field-error" id="err-nome" role="alert">Informe seu nome completo.</div>
+      </div>
+      <div class="field">
+        <label for="f-email">E-mail</label>
+        <input type="email" id="f-email" aria-describedby="err-email" aria-invalid="false" required autocomplete="email" placeholder="voce@exemplo.com">
+        <div class="field-error" id="err-email" role="alert">Informe um e-mail válido.</div>
+      </div>
+      <div class="field">
+        <label for="f-telefone">Telefone (com DDD)</label>
+        <input type="tel" id="f-telefone" aria-describedby="err-telefone" aria-invalid="false" required autocomplete="tel" placeholder="(11) 91234-5678">
+        <div class="field-error" id="err-telefone" role="alert">Informe um telefone válido, com DDD.</div>
+      </div>
+
+      <p class="privacy-line"><i class="ti ti-lock" aria-hidden="true" style="vertical-align:-2px"></i> Nunca pedimos número de cartão, senha ou dados bancários. Nenhum site legítimo de verificação de vazamento precisa disso — desconfie se pedirem.</p>
+
+      <button type="submit" class="submit" id="submit-btn">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <span>Verificar exposição</span>
+      </button>
+    </form>
+
+    <div class="scan" id="scan-box" role="status">
+      <div class="scan-step" id="step-1"><div class="dot"></div><span>Verificando e-mail em bases de vazamento conhecidas</span></div>
+      <div class="scan-step" id="step-2"><div class="dot"></div><span>Verificando telefone em bases de vazamento conhecidas</span></div>
+    </div>
+
+    <div class="result" id="result-box"></div>
+
+    <button type="button" class="reset-link" id="reset-btn" style="display:none">
+      <i class="ti ti-arrow-left" aria-hidden="true"></i> Fazer nova verificação
+    </button>
+    <div class="accessibility-controls" role="group" aria-label="Controles de acessibilidade">
+      <button type="button" class="btn theme-btn" id="theme-toggle">
+        <i class="ti ti-moon" aria-hidden="true"></i>
+        <span>Modo escuro</span>
+      </button>
+      <div class="font-controls" role="group" aria-labelledby="font-size-label">
+        <span id="font-size-label" class="font-size-label">Tamanho da fonte</span>
+        <button type="button" class="font-btn" id="font-decrease" aria-label="Diminuir tamanho da fonte">A−</button>
+        <span id="font-level" class="font-level" aria-live="polite">3 de 5</span>
+        <button type="button" class="font-btn" id="font-increase" aria-label="Aumentar tamanho da fonte">A+</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">Ferramenta educativa e de demonstração. Não substitui os canais oficiais do seu banco ou da polícia em caso de fraude.</p>
+</main>
+</body>
+</html>
