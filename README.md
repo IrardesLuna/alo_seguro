@@ -1,6 +1,6 @@
 # Alô Seguro
 
-> **Consulte se seus dados pessoais aparecem em vazamentos conhecidos e receba orientações claras para se proteger.**
+> **Consulte se seus dados pessoais aparecem em vazamentos conhecidos e receba orientações claras para se proteger**
 
 [![Status](https://img.shields.io/badge/status-em%20desenvolvimento-DAA520?style=for-the-badge)](#status-do-projeto)
 [![Projeto acadêmico](https://img.shields.io/badge/CESAR%20School-Projetos%201-0A66C2?style=for-the-badge)](#sobre-o-projeto)
