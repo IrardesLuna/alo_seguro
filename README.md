@@ -217,7 +217,69 @@ alo_seguro/
 
 ## Começando
 
-O procedimento exato depende dos arquivos e dependências presentes no repositório. Quando a configuração do projeto estiver definida, documente aqui os comandos testados para instalar dependências, configurar variáveis e iniciar front-end e API.
+### Como rodar localmente
+
+O site e a API rodam juntos pelo FastAPI. Requisitos: **Python 3.12** ou mais novo.
+
+No PowerShell, dentro da pasta do repositório:
+
+```powershell
+cd backend
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+copy .env.example .env
+```
+
+Abra `backend/.env` e cole sua chave gratuita do Gemini em `GEMINI_API_KEY`
+(gere em [aistudio.google.com/apikey](https://aistudio.google.com/apikey)). Sem a chave, a análise
+de mensagens funciona só com as regras automáticas.
+
+```powershell
+.venv\Scripts\python -m uvicorn app.main:app --reload
+```
+
+Abra **http://127.0.0.1:8000** no navegador. Para parar o servidor, aperte `Ctrl + C`.
+
+Outros comandos úteis (dentro de `backend`):
+
+| Comando | Para quê |
+| --- | --- |
+| `.venv\Scripts\python -m pytest` | roda os testes automáticos |
+| `.venv\Scripts\python -m app.listar_modelos` | mostra os modelos do Gemini liberados para a sua chave |
+
+### Análise de mensagens e links
+
+A aba **Analisar mensagem** pergunta "O que você quer analisar?" e oferece três opções:
+**mensagem de rede social** (WhatsApp, Instagram, Facebook, LinkedIn, Telegram, TikTok, SMS e outras;
+a IA descobre a rede pelo texto), **e-mail** ou **link**. Ela devolve a chance de ser golpe (sempre
+entre 1% e 99%), as red flags, as táticas de manipulação e dicas para confirmar. Os arquivos principais:
+
+| Pasta / arquivo | Conteúdo |
+| --- | --- |
+| `agente/` | base com 613 golpes, taxonomia de táticas e prompts da IA |
+| `backend/app/main.py` | rotas da API (`/api/analisar`, `/api/plataformas`, `/api/saude`) |
+| `backend/app/heuristica.py` | regras automáticas (funcionam sem IA) |
+| `backend/app/links.py` | análise técnica de links |
+| `backend/app/anonimizar.py` | oculta dados pessoais antes de enviar para a IA |
+| `projeto1-acessibilidade-corrigido/projeto1/analisar.js` e `analisar.css` | tela da análise |
+
+O texto colado **não é guardado**. A chave da IA fica só no servidor (`backend/.env`, ignorado pelo Git).
+
+### Problemas com a chave do Gemini
+
+Se a análise mostrar "O Google não liberou o plano gratuito da IA para o projeto desta chave", o
+Google bloqueou o nível gratuito para aquele projeto (erro `403 PERMISSION_DENIED`). Criar outra
+chave **no mesmo projeto** não resolve. Tente, nesta ordem:
+
+1. Abra [aistudio.google.com/projects](https://aistudio.google.com/projects) e veja o status do projeto.
+   Se aparecer **"Verification needed"**, clique em **Verify project** e confirme pelo celular (QR code).
+2. Confira se a data de nascimento da conta Google indica **18 anos ou mais**
+   ([myaccount.google.com/birthday](https://myaccount.google.com/birthday)). Contas institucionais
+   (Workspace for Education) dependem do administrador.
+3. Crie um **projeto novo** no AI Studio, gere a chave nele e troque no `backend/.env`.
+4. Use a chave de outra pessoa do grupo cujo projeto tenha o plano gratuito liberado.
+
+Enquanto isso, o site continua funcionando com as regras automáticas.
 
 Para manter este README confiável:
 
