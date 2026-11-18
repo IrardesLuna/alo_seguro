@@ -6,9 +6,11 @@
     <title>Alô Seguro</title>
     <link rel="icon" type="image/png" href="logo-grupo5-avatar.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <link rel="stylesheet" href="proj1.css">
+    <link rel="stylesheet" href="analisar.css">
     <script src="proj1.js" defer></script>
+    <script src="analisar.js" defer></script>
 </head>
 <body data-font-size="3">
 
@@ -19,11 +21,21 @@
     </div>
     <div>
       <h1>Alô Seguro</h1>
-      <p class="sr-only">Ferramenta de verificação de exposição de dados: informe nome, e-mail e telefone para checar se aparecem em vazamentos conhecidos, com orientações de segurança.</p>
-      <span>Verificador de exposição de dados</span>
+      <p class="sr-only">Ferramentas de proteção: verifique se seus dados aparecem em vazamentos conhecidos ou analise uma mensagem ou link suspeito para saber a chance de ser golpe.</p>
+      <span>Proteção contra vazamentos e golpes</span>
     </div>
   </div>
 
+  <div class="abas" role="tablist" aria-label="Ferramentas do Alô Seguro">
+    <button type="button" class="aba" role="tab" id="aba-vazamento" aria-controls="painel-vazamento" aria-selected="true">
+      <i class="ti ti-database-search" aria-hidden="true"></i><span>Verificar vazamento</span>
+    </button>
+    <button type="button" class="aba" role="tab" id="aba-mensagem" aria-controls="painel-mensagem" aria-selected="false" tabindex="-1">
+      <i class="ti ti-message-exclamation" aria-hidden="true"></i><span>Analisar mensagem</span>
+    </button>
+  </div>
+
+  <section class="painel" id="painel-vazamento" role="tabpanel" aria-labelledby="aba-vazamento" tabindex="0">
   <p class="intro">Verifique se seu e-mail ou telefone já apareceu em vazamentos de dados conhecidos. Se algo for encontrado, mostramos onde e o que fazer a seguir.</p>
 
   <div class="demo-note">
@@ -67,6 +79,69 @@
     <button type="button" class="reset-link" id="reset-btn" style="display:none">
       <i class="ti ti-arrow-left" aria-hidden="true"></i> Fazer nova verificação
     </button>
+  </div>
+  </section>
+
+  <section class="painel" id="painel-mensagem" role="tabpanel" aria-labelledby="aba-mensagem" tabindex="0" hidden>
+    <p class="intro">Recebeu uma mensagem estranha ou um link suspeito? Cole aqui para ver a chance de ser golpe, os sinais de alerta e como confirmar antes de agir.</p>
+
+    <div class="demo-note">
+      <i class="ti ti-shield-lock" aria-hidden="true"></i>
+      <span>Não cole senhas, números de cartão ou documentos. Antes da análise, ocultamos CPF, telefone, e-mail e cartão. O texto é analisado por uma IA (Google Gemini) com apoio de regras automáticas e <strong style="color:var(--text-primary); font-weight:500">não fica guardado</strong> no Alô Seguro.</span>
+    </div>
+
+    <div class="card">
+      <form id="analise-form" novalidate>
+        <fieldset class="canais">
+          <legend>O que você quer analisar?</legend>
+          <div class="canais-opcoes">
+            <label class="canal">
+              <input type="radio" name="canal" value="redes_sociais" checked aria-describedby="desc-redes">
+              <i class="ti ti-messages" aria-hidden="true"></i>
+              <span class="canal-texto"><span class="canal-nome">Mensagem de rede social</span><span class="canal-desc" id="desc-redes">WhatsApp, Instagram, Facebook, LinkedIn, Telegram, SMS…</span></span>
+            </label>
+            <label class="canal">
+              <input type="radio" name="canal" value="email" aria-describedby="desc-email">
+              <i class="ti ti-mail" aria-hidden="true"></i>
+              <span class="canal-texto"><span class="canal-nome">E-mail</span><span class="canal-desc" id="desc-email">Mensagem recebida por e-mail</span></span>
+            </label>
+            <label class="canal">
+              <input type="radio" name="canal" value="links" aria-describedby="desc-links">
+              <i class="ti ti-link" aria-hidden="true"></i>
+              <span class="canal-texto"><span class="canal-nome">Link</span><span class="canal-desc" id="desc-links">Endereço de site suspeito</span></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <label for="f-mensagem" id="rotulo-mensagem">Cole a mensagem recebida</label>
+          <textarea id="f-mensagem" rows="7" maxlength="6000" aria-describedby="dica-mensagem contador-mensagem err-mensagem" aria-invalid="false" placeholder="Ex.: Oi mãe, esse é meu número novo. Consegue me fazer um Pix urgente?"></textarea>
+          <div class="campo-rodape">
+            <span class="field-hint" id="dica-mensagem">Copie o texto completo, com links e o nome de quem enviou, se aparecer.</span>
+            <span class="contador" id="contador-mensagem">0 / 6000</span>
+          </div>
+          <div class="field-error" id="err-mensagem" role="alert">Cole a mensagem ou o link que você recebeu.</div>
+        </div>
+
+        <button type="submit" class="submit" id="analise-btn">
+          <i class="ti ti-search" aria-hidden="true"></i>
+          <span>Analisar mensagem</span>
+        </button>
+      </form>
+
+      <div class="scan" id="analise-carregando" role="status">
+        <div class="scan-step active"><div class="dot"></div><span>Procurando sinais de golpe na mensagem…</span></div>
+      </div>
+
+      <div class="result" id="analise-resultado"></div>
+
+      <button type="button" class="reset-link" id="analise-nova" style="display:none">
+        <i class="ti ti-arrow-left" aria-hidden="true"></i> Analisar outra mensagem
+      </button>
+    </div>
+  </section>
+
+  <div class="card card-acessibilidade">
     <div class="accessibility-controls" role="group" aria-label="Controles de acessibilidade">
       <button type="button" class="btn theme-btn" id="theme-toggle">
         <i class="ti ti-moon" aria-hidden="true"></i>
@@ -81,7 +156,7 @@
     </div>
   </div>
 
-  <p class="footnote">Ferramenta educativa e de demonstração. Não substitui os canais oficiais do seu banco ou da polícia em caso de fraude.</p>
+  <p class="footnote">Ferramenta educativa e de demonstração. As análises são estimativas e não substituem os canais oficiais do seu banco ou da polícia em caso de fraude.</p>
 </main>
 </body>
 </html>

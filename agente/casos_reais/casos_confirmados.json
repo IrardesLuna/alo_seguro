@@ -1,0 +1,4 @@
+{
+  "descricao": "Casos reais confirmados pela equipe. Enquanto o CRUD de moderação não existe, este arquivo é a fonte dos casos usados no prompt. Formato de cada caso em agente/INTEGRACAO_CRUD.md.",
+  "casos": []
+}
