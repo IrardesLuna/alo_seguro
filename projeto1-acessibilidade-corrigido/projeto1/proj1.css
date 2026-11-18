@@ -1,32 +1,27 @@
+/* Alô Seguro · Brand Book Visual v1.0 */
 :root {
-  --bg: #10161c;
-  --surface: #1a222b;
-  --surface-2: #202a34;
-  --border: #2c3742;
-  --border-strong: #3c4a57;
-  --text-primary: #edf1f4;
-  --text-secondary: #9aabb8;
-  --text-muted: #8d9dab;
-  --accent: #35b8a6;
-  --accent-dark: #0f3a35;
-  --danger: #f07a70;
-  --danger-dark: #3a1613;
-  --warning: #e2a33d;
-  --warning-dark: #3a2a0d;
-  --success: #4caf7d;
-  --success-dark: #12301f;
-  --font-ui: 'IBM Plex Sans', -apple-system, sans-serif;
-  --font-data: 'IBM Plex Mono', ui-monospace, monospace;
-  --radius: 10px;
-  --font-scale: 1;
-  --field-border: #6a7b8a;
+  color-scheme: light;
+  --bg: #FAF7F2; --surface: #FFFFFF; --surface-2: #FAF7F2;
+  --border: #D7D1C9; --border-strong: #766F68;
+  --text-primary: #14110F; --text-secondary: #4A4540; --text-muted: #4A4540;
+  --accent: #FF6002; --accent-dark: #FFF0E5;
+  --danger: #B42318; --danger-dark: #FFF0EE;
+  --warning: #B84300; --warning-dark: #FFF0E5;
+  --success: #1B7F4B; --success-dark: #E8F5EC;
+  --font-ui: 'Atkinson Hyperlegible', Verdana, Arial, sans-serif;
+  --font-data: 'Atkinson Hyperlegible', Verdana, Arial, sans-serif;
+  --radius: 10px; --font-scale: 1; --field-border: #766F68;
 }
-:root[data-theme="light"] {
-  --bg: #f3f5f6; --surface: #ffffff; --surface-2: #eef1f3;
-  --border: #d7dde1; --border-strong: #b9c2c8;
-  --text-primary: #16202a; --text-secondary: #4d5c68; --text-muted: #5f6d78;
-  --danger: #c0392b; --field-border: #78858f;
-  --accent-dark: #d6f2ee; --danger-dark: #fbe4e2; --warning-dark: #fbedd6; --success-dark: #dff3e7;
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0B1B33; --surface: #1B2A41; --surface-2: #16253B;
+  --border: #61718A; --border-strong: #B8C2D1;
+  --text-primary: #F5F7FA; --text-secondary: #B8C2D1; --text-muted: #B8C2D1;
+  --accent: #FF6002; --accent-dark: #352A28;
+  --danger: #FF8A80; --danger-dark: #3E252E;
+  --warning: #FF8A3D; --warning-dark: #382A21;
+  --success: #4ADE80; --success-dark: #183B32;
+  --field-border: #B8C2D1;
 }
 
 .btn { width: 100%; background: var(--accent); color: #06211d; border: none; border-radius: 8px; padding: 0.8rem 1rem; font-family: var(--font-ui); font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: filter 0.15s, background-color 0.2s; }
@@ -39,12 +34,12 @@
 .btn:focus-visible, .font-btn:focus-visible, button.submit:focus-visible, .reset-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .font-level { min-width: 46px; text-align: center; font-family: var(--font-data); font-size: 12px; }
 
-body[data-font-size="1"] { --font-scale: .9; }
-body[data-font-size="2"] { --font-scale: 1; }
-body[data-font-size="3"] { --font-scale: 1.1; }
-body[data-font-size="4"] { --font-scale: 1.2; }
-body[data-font-size="5"] { --font-scale: 1.3; }
-body[data-font-size="1"] .app, body[data-font-size="2"] .app, body[data-font-size="3"] .app, body[data-font-size="4"] .app, body[data-font-size="5"] .app { zoom: var(--font-scale); }
+body[data-font-size="1"] { --font-scale: 1; }
+body[data-font-size="2"] { --font-scale: 1.08; }
+body[data-font-size="3"] { --font-scale: 1.16; }
+body[data-font-size="4"] { --font-scale: 1.24; }
+body[data-font-size="5"] { --font-scale: 1.32; }
+body[data-font-size="1"] .app, body[data-font-size="2"] .app, body[data-font-size="3"] .app, body[data-font-size="4"] .app, body[data-font-size="5"] .app { font-size: calc(1rem * var(--font-scale)); }
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); min-height: 100vh; transition: background-color 0.2s, color 0.2s; }
@@ -132,3 +127,44 @@ button.submit:disabled { opacity: 0.6; cursor: default; }
 .reset-link:hover { color: var(--text-primary); }
 
 .footnote { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-top: 1.5rem; text-align: center; }
+
+/* Refinamentos de legibilidade, interação e responsividade */
+.app { max-width: 760px; padding: 2rem 1rem 3rem; }
+.brand { gap: 1rem; margin-bottom: .75rem; }
+.brand-mark { width: 56px; height: 56px; background: transparent; border-radius: 50%; }
+.brand h1 { font-size: clamp(2rem, 5vw, 2.75rem); font-weight: 700; }
+.brand span { font-size: 1.125rem; line-height: 1.5; }
+.intro, .demo-note, .privacy-line, .footnote, .result-banner p,
+.steps-list li, .tips-list li, .leak-item-row, .scan-step { font-size: calc(1rem * var(--font-scale)); line-height: 1.6; }
+.intro { max-width: 65ch; }
+.card { padding: clamp(1rem, 4vw, 2rem); }
+.field label, .leak-item-head strong, .steps-title, .result-banner h2 {
+  font-size: calc(1.05rem * var(--font-scale)); font-weight: 700;
+}
+.field input { font-size: calc(1.05rem * var(--font-scale)); min-height: 52px; padding: .75rem 1rem; }
+button.submit, .btn { font-size: calc(1.05rem * var(--font-scale)); font-weight: 700; min-height: 52px; color: #14110F; }
+.font-btn { min-height: 48px; min-width: 48px; font-size: calc(1rem * var(--font-scale)); }
+.font-controls, .font-level, .font-size-label { font-size: calc(1rem * var(--font-scale)); }
+.font-controls { gap: 1rem; }
+.field-error, .leak-item-head span, .leak-item-row b, .steps-list .n, .demo-note code {
+  font-size: calc(.95rem * var(--font-scale));
+}
+.reset-link { font-size: calc(1rem * var(--font-scale)); min-height: 48px; }
+.steps-list .n { width: 32px; height: 32px; }
+.scan-step .dot { width: 18px; height: 18px; }
+.btn:focus-visible, .font-btn:focus-visible, button.submit:focus-visible,
+.reset-link:focus-visible, .field input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+:root[data-theme="dark"] .btn:focus-visible,
+:root[data-theme="dark"] .font-btn:focus-visible,
+:root[data-theme="dark"] button.submit:focus-visible,
+:root[data-theme="dark"] .reset-link:focus-visible,
+:root[data-theme="dark"] .field input:focus-visible { outline-color: #FFFFFF; }
+@media (max-width: 480px) {
+  .app { padding: 1.25rem .75rem 2rem; }
+  .brand-mark { width: 48px; height: 48px; }
+  .leak-item-head { flex-wrap: wrap; }
+  .card { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
