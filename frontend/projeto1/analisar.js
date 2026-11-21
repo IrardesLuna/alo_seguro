@@ -8,7 +8,8 @@
 
   // Se o site for aberto pelo próprio servidor (porta 8000), a API está no mesmo endereço.
   // Se for aberto direto do arquivo ou pelo Live Server, usamos o servidor local.
-  var API_BASE = window.ALO_SEGURO_API !== undefined ? window.ALO_SEGURO_API
+  // (o endereço é calculado em proj1.js, que carrega antes deste arquivo)
+  var API_BASE = window.ALO_SEGURO_API_BASE !== undefined ? window.ALO_SEGURO_API_BASE
     : (location.protocol === 'file:' || location.port === '5500' || location.port === '5501') ? 'http://127.0.0.1:8000' : '';
 
   var NIVEIS = {
@@ -81,7 +82,8 @@
     });
   });
 
-  var abaInicial = location.hash === '#analisar' ? 'aba-mensagem' : lerStorage('alo-seguro-aba');
+  var ABAS_POR_ENDERECO = { '#analisar': 'aba-mensagem', '#conversar': 'aba-conversa' };
+  var abaInicial = ABAS_POR_ENDERECO[location.hash] || lerStorage('alo-seguro-aba');
   if (abaInicial && document.getElementById(abaInicial)) abrirAba(document.getElementById(abaInicial), false);
 
   // ---------------------------------------------------------------------
@@ -297,6 +299,21 @@
       origem += ' Ocultamos ' + dados.dados_ocultados + (dados.dados_ocultados === 1 ? ' dado pessoal' : ' dados pessoais') + ' antes de analisar.';
     }
     partes.push(el('p', { 'class': 'rodape-analise', texto: origem + ' Isto é uma estimativa: na dúvida, confirme sempre por outro canal.' }));
+
+    // Leva o resumo desta análise para a aba "Tirar dúvidas" (conversa.js).
+    if (window.AloSeguroConversa) {
+      var duvidas = el('button', { type: 'button', 'class': 'btn btn-duvidas' }, [icone('ti-messages'), el('span', { texto: 'Tirar dúvidas sobre esta análise' })]);
+      duvidas.addEventListener('click', function () {
+        window.AloSeguroConversa.abrirComAnalise({
+          probabilidade_golpe: dados.probabilidade_golpe,
+          nivel: dados.nivel,
+          veredito: dados.veredito,
+          golpe_parecido: dados.golpe_parecido ? dados.golpe_parecido.nome : '',
+          taticas: dados.taticas_detectadas || []
+        });
+      });
+      partes.push(duvidas);
+    }
 
     partes.forEach(function (parte) { resultado.appendChild(parte); });
     resultado.classList.add('show');

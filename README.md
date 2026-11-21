@@ -160,16 +160,34 @@ A arquitetura pode começar simples e evoluir por etapas, preservando limites cl
 
 1. **Observabilidade com privacidade:** acompanhar disponibilidade e erros agregados sem registrar os valores consultados.
 
-### Exemplo de fluxo da API (proposto)
+### Rotas da API
 
-Os caminhos abaixo são apenas uma proposta para orientar o desenho; **não representam endpoints confirmados ou já implementados**.
+Documentação interativa (OpenAPI) em **http://127.0.0.1:8000/docs** com o servidor ligado.
 
-| Método | Caminho proposto | Finalidade |
+| Método | Caminho | Finalidade |
 | --- | --- | --- |
-| `GET` | `/health` | Verificar disponibilidade básica do serviço |
-| `POST` | `/api/v1/check` | Solicitar uma consulta validada |
+| `GET` | `/health` | Disponibilidade do serviço e modo da consulta de vazamentos (demonstração ou real) |
+| `POST` | `/api/v1/check` | Verifica e-mail e/ou telefone em vazamentos conhecidos e devolve recomendações |
+| `POST` | `/api/analisar` | Analisa uma mensagem ou link e estima a chance de ser golpe |
+| `POST` | `/api/v1/conversa` | Chat para tirar dúvidas sobre golpes e phishing (o histórico vem do navegador; nada é guardado) |
+| `GET` `POST` `PATCH` `DELETE` | `/api/v1/admin/casos` | CRUD dos casos reais (só aceita pedidos do próprio computador) |
+| `GET` | `/api/plataformas` | Opções da tela de análise e quantos golpes há em cada base |
+| `GET` | `/api/saude` | Estado da IA (Gemini) |
 
-A resposta de consulta deve usar um formato previsível e evitar incluir dados que não sejam necessários para explicar o resultado. Autenticação, limites, consentimento, retenção e requisitos das fontes precisam ser definidos antes de uma publicação real.
+Exemplo de pedido para `/api/v1/check` (basta um dos dois campos; nome, senha ou cartão nunca são pedidos):
+
+```json
+{ "email": "teste@exemplo.com", "telefone": "(11) 99999-9999" }
+```
+
+A resposta traz `status` (`exposto`, `nada_encontrado` ou `nao_verificado`), `resumo`,
+`exposicoes` (incidente, data, dados expostos e por qual campo foi encontrado),
+`recomendacoes` (com links para canais oficiais), `campos_verificados`, `campos_nao_verificados`,
+`fontes`, `demonstracao` e `aviso_limites`. **O e-mail e o telefone consultados não voltam na
+resposta, não são guardados nem registrados em log.** As rotas `POST` têm limite de pedidos
+por minuto por IP (`LIMITE_POR_MINUTO`), o que também dificulta a enumeração em massa.
+
+Autenticação, consentimento, retenção e requisitos das fontes ainda precisam ser revistos antes de uma publicação real.
 
 ## Experiência visual e animações
 
@@ -207,11 +225,11 @@ alo_seguro/
 │   │   ├── services/
 │   │   ├── integrations/
 │   │   └── schemas/
-│   ├── tests/
-│   └── requirements.txt
+│   └── tests/
 ├── docs/
 ├── .env.example
 ├── .gitignore
+├── requirements.txt
 └── README.md
 ```
 
@@ -221,31 +239,72 @@ alo_seguro/
 
 O site e a API rodam juntos pelo FastAPI. Requisitos: **Python 3.12** ou mais novo.
 
-No PowerShell, dentro da pasta do repositório:
+**1. Criar o ambiente virtual e instalar as dependências** (só na primeira vez), no PowerShell,
+na **raiz** do repositório:
 
 ```powershell
-cd backend
 python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-copy .env.example .env
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+copy backend\.env.example backend\.env
 ```
 
-Abra `backend/.env` e cole sua chave gratuita do Gemini em `GEMINI_API_KEY`
-(gere em [aistudio.google.com/apikey](https://aistudio.google.com/apikey)). Sem a chave, a análise
-de mensagens funciona só com as regras automáticas.
+Se o PowerShell bloquear o `Activate.ps1` ("a execução de scripts foi desabilitada"), libere
+só para o seu usuário e tente de novo:
 
 ```powershell
-.venv\Scripts\python -m uvicorn app.main:app --reload
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+No Prompt de Comando (cmd) use `.venv\Scripts\activate.bat`; no Git Bash, Linux ou macOS,
+`source .venv/Scripts/activate` (Windows) ou `source .venv/bin/activate` (Linux/macOS).
+Com o ambiente ativo, aparece `(.venv)` no começo da linha. Para sair, digite `deactivate`.
+
+**2. Configurar a chave da IA (opcional).** Abra `backend/.env` e cole sua chave gratuita do Gemini em `GEMINI_API_KEY`
+(gere em [aistudio.google.com/apikey](https://aistudio.google.com/apikey)). Sem a chave, a análise
+de mensagens funciona só com as regras automáticas. A verificação de vazamentos usa por padrão a base de
+demonstração (veja [Verificação de vazamentos](#verifica%C3%A7%C3%A3o-de-vazamentos)).
+
+**3. Ligar o servidor** (nas próximas vezes, comece daqui: ative o ambiente e rode):
+
+```powershell
+.venv\Scripts\Activate.ps1
+cd backend
+python -m uvicorn app.main:app --reload
 ```
 
 Abra **http://127.0.0.1:8000** no navegador. Para parar o servidor, aperte `Ctrl + C`.
 
-Outros comandos úteis (dentro de `backend`):
+Outros comandos úteis (com o ambiente ativo, dentro de `backend`):
 
 | Comando | Para quê |
 | --- | --- |
-| `.venv\Scripts\python -m pytest` | roda os testes automáticos |
-| `.venv\Scripts\python -m app.listar_modelos` | mostra os modelos do Gemini liberados para a sua chave |
+| `python -m pytest` | roda os testes automáticos |
+| `python -m app.listar_modelos` | mostra os modelos do Gemini liberados para a sua chave |
+
+A pasta `.venv` e o arquivo `backend/.env` ficam fora do Git (`.gitignore`): cada pessoa cria os seus.
+Ao adicionar uma biblioteca nova, coloque-a com a versão em `requirements.txt`, na raiz.
+
+### Verificação de vazamentos
+
+A aba **Verificar vazamento** envia o e-mail e/ou telefone para `POST /api/v1/check`. O nome é
+opcional e **não sai do navegador** (serve só para personalizar o resultado). O servidor consulta as
+fontes configuradas em `backend/.env`:
+
+| `FONTE_VAZAMENTOS` | O que acontece |
+| --- | --- |
+| `demo` (padrão) | base local com dados **fictícios**, sem internet. Teste com `teste@exemplo.com` ou `(11) 99999-9999` |
+| `hibp` | [Have I Been Pwned](https://haveibeenpwned.com/API/v3) para **e-mail**. Exige chave paga em `HIBP_API_KEY`. O HIBP não verifica telefone: a tela avisa que o telefone não foi verificado |
+
+Cada fonte é um adaptador em `backend/app/fontes.py`; para somar uma fonte nova, basta criar outra
+classe com o mesmo método `consultar()`. Incidentes marcados como sensíveis pela fonte aparecem sem o nome.
+
+As recomendações vêm de um catálogo fixo, revisado pela equipe (`backend/app/vazamentos.py`), e são
+escolhidas pelos tipos de dado expostos (senha, cartão, documento, telefone…). Se houver chave do
+Gemini e `IA_NO_VAZAMENTO=true`, o **Orientador de Vazamentos** (`agente/prompt_vazamento.md`) escreve
+o resumo e ordena as recomendações. A IA recebe só o nome e a data dos incidentes e os tipos de dado,
+**nunca o e-mail ou o telefone**, e não pode criar recomendações nem links novos. Sem IA, as regras
+fazem o mesmo trabalho.
 
 ### Análise de mensagens e links
 
@@ -256,14 +315,57 @@ entre 1% e 99%), as red flags, as táticas de manipulação e dicas para confirm
 
 | Pasta / arquivo | Conteúdo |
 | --- | --- |
-| `agente/` | base com 613 golpes, taxonomia de táticas e prompts da IA |
-| `backend/app/main.py` | rotas da API (`/api/analisar`, `/api/plataformas`, `/api/saude`) |
+| `agente/` | base com 613 golpes, taxonomia de táticas e prompts da IA (golpes e vazamentos) |
+| `backend/app/main.py` | rotas da API (`/health`, `/api/v1/check`, `/api/analisar`, `/api/plataformas`, `/api/saude`) |
+| `backend/app/vazamentos.py` e `fontes.py` | verificação de vazamentos, fontes e recomendações |
+| `backend/app/conversa.py` | chat "Tirar dúvidas" |
+| `backend/app/casos.py` | CRUD dos casos reais (SQLite) |
 | `backend/app/heuristica.py` | regras automáticas (funcionam sem IA) |
 | `backend/app/links.py` | análise técnica de links |
 | `backend/app/anonimizar.py` | oculta dados pessoais antes de enviar para a IA |
-| `projeto1-acessibilidade-corrigido/projeto1/analisar.js` e `analisar.css` | tela da análise |
+| `frontend/projeto1/proj1.html`, `proj1.js` e `proj1.css` | página e tela de verificação de vazamentos |
+| `frontend/projeto1/analisar.js` e `analisar.css` | tela da análise |
+| `frontend/projeto1/conversa.js` e `conversa.css` | tela do chat |
+| `frontend/projeto1/admin.html`, `admin.js` e `admin.css` | página de moderação dos casos |
 
 O texto colado **não é guardado**. A chave da IA fica só no servidor (`backend/.env`, ignorado pelo Git).
+
+### Tirar dúvidas (chat)
+
+A aba **Tirar dúvidas** é uma conversa guiada para quem tem pouca familiaridade digital: a pessoa
+escreve do seu jeito ou toca em perguntas prontas ("Já paguei. E agora?", "Como falo com meu banco
+com segurança?"), e cada resposta tem o botão **Ouvir resposta** (voz do próprio navegador). No fim
+de uma análise de mensagem, o botão **Tirar dúvidas sobre esta análise** abre o chat já com o
+resumo daquela análise.
+
+- **Nada é guardado:** o histórico fica só na página e é enviado a cada pergunta; some ao fechar.
+- **Privacidade:** CPF, telefone, e-mail e cartão são ocultados antes de ir para a IA.
+- **Segurança:** o agente (`agente/prompt_conversa.md`) reaproveita as seções 3 e 4 do
+  `prompt_sistema.md`. O backend apaga links e telefones que a IA escrever (menos sites `.gov.br`),
+  não deixa o risco cair abaixo do que as regras acharam em casos graves e mostra os contatos de
+  ajuda (CVV 188, 190, Disque 100, SaferNet) com texto fixo.
+- **Limites:** até 6 perguntas por conversa e `LIMITE_POR_MINUTO` pedidos por minuto.
+- **Sem IA:** as regras automáticas respondem às situações mais comuns (golpe detectado, "já caí",
+  falar com o banco, verificação em duas etapas, link seguro, "explica mais simples").
+
+### Moderação de casos reais (CRUD)
+
+O detector aprende com casos reais cadastrados **pela equipe** em **http://127.0.0.1:8000/admin.html**
+(a página não aparece no menu do site). Cada caso tem texto, plataforma, rótulo (golpe ou não),
+táticas, golpe parecido da base, lição e status (`pendente`, `aprovado`, `rejeitado`).
+
+- O botão **Sugerir táticas** usa as regras automáticas (sem IA, sem gastar cota) para pré-preencher
+  táticas, golpe parecido e rótulo. Revise antes de salvar.
+- O texto é **anonimizado ao salvar** (CPF, telefone, e-mail, cartão viram `[CPF]`, `[TELEFONE]`…).
+- Só casos **aprovados** entram no prompt da IA, até 5 por análise, escolhidos por semelhança
+  (`backend/app/similares.py`). Marque cerca de 1 em cada 5 aprovados como **reservado para teste**:
+  eles não vão para a IA e servem para medir se o detector acerta.
+- Os casos ficam em `backend/alo_seguro.db` (SQLite), criado na primeira vez e **fora do Git**:
+  cada computador tem o seu banco.
+- **Sem senha, por decisão da equipe:** as rotas `/api/v1/admin/...` só aceitam pedidos feitos no
+  próprio computador que roda o servidor (127.0.0.1). Atenção: se um dia o site for publicado atrás
+  de um proxy (Nginx, Render, Railway…), todos os pedidos podem parecer vir de 127.0.0.1; antes disso,
+  é preciso adicionar uma senha ou login.
 
 ### Problemas com a chave do Gemini
 

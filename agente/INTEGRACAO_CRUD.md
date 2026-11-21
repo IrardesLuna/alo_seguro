@@ -1,5 +1,11 @@
 # Integração do analisador com o CRUD de casos reais
 
+> **Status: implementado.** O CRUD está em `backend/app/casos.py` (SQLite em `backend/alo_seguro.db`),
+> com rotas em `/api/v1/admin/casos` e a página `frontend/projeto1/admin.html`. Por decisão da equipe,
+> **só o moderador cadastra** casos (não há feedback do público) e **não há senha**: as rotas só
+> aceitam pedidos do próprio computador. `similares.carregar_casos()` já lê os casos aprovados do banco.
+> O texto abaixo ficou como documentação do formato e das regras.
+
 Documento para quem vai construir o CRUD. O analisador de mensagens já está pronto e **já sabe
 usar casos reais**. Falta só a parte de guardar e moderar esses casos.
 

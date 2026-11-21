@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Banco SQLite local com os casos reais (CRUD de moderação)
+backend/*.db
+backend/*.db-journal

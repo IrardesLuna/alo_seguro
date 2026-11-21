@@ -1,10 +1,27 @@
-# Agente Detector de Golpes
+# Agentes do Alô Seguro
+
+A pasta tem três agentes que usam o Gemini:
+
+- **Detector de Golpes** (`prompt_sistema.md`): analisa mensagens e links (`POST /api/analisar`).
+- **Orientador de Vazamentos** (`prompt_vazamento.md`): explica o resultado da verificação de
+  vazamentos (`POST /api/v1/check`) e ordena as recomendações. Recebe **só metadados** (nome e data
+  do incidente, tipos de dado expostos), nunca o e-mail ou o telefone, e só pode escolher
+  recomendações do catálogo fixo em `backend/app/vazamentos.py`; não cria textos de ação nem links.
+  Se a IA falhar, as regras do backend fazem o resumo e a ordem.
+- **Conversa Segura** (`prompt_conversa.md`): chat "Tirar dúvidas" (`POST /api/v1/conversa`).
+  Reaproveita as seções 3 e 4 do `prompt_sistema.md` (o conhecimento fica num lugar só). Responde em
+  até 120 palavras, uma pergunta por vez, e não pode escrever links nem telefones: o backend
+  (`backend/app/conversa.py`) apaga o que não for `.gov.br` e responde por regras se a IA falhar.
+
+O restante deste documento trata do Detector de Golpes.
 
 ## Arquivos
 
 ```
 agente/
 ├── prompt_sistema.md        ← instrução principal enviada ao Gemini (v2)
+├── prompt_vazamento.md      ← instrução do Orientador de Vazamentos (resultado da consulta)
+├── prompt_conversa.md       ← instrução do chat "Tirar dúvidas" (Conversa Segura)
 ├── prompt_novo_golpe.md     ← prompt do moderador para criar golpes novos a partir de casos reais
 ├── aprendizado_continuo.md  ← como o agente aprende com os casos reais do projeto
 ├── taxonomia.json           ← definição de todas as tags (classificação + 25 táticas)

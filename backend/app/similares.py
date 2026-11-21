@@ -1,12 +1,12 @@
 """Busca casos reais confirmados parecidos com a mensagem nova (aprendizado contínuo).
 
-Hoje os casos vêm de agente/casos_reais/casos_confirmados.json.
-Quando o CRUD de moderação existir, basta trocar a função carregar_casos()
-para ler do banco de dados (ver agente/INTEGRACAO_CRUD.md).
+Os casos vêm do banco SQLite alimentado pela página de moderação (admin.html, ver casos.py).
+O arquivo antigo agente/casos_reais/casos_confirmados.json ainda é lido, se tiver casos.
 """
 import json
 import re
 
+from . import casos as casos_db
 from .agente import REDES_SOCIAIS
 from .config import PASTA_AGENTE
 from .heuristica import jaccard, normalizar
@@ -29,10 +29,11 @@ def palavras_importantes(texto: str) -> set:
 
 
 def carregar_casos() -> list[dict]:
-    if not ARQUIVO_CASOS.exists():
-        return []
-    dados = json.loads(ARQUIVO_CASOS.read_text(encoding="utf-8"))
-    return dados.get("casos", [])
+    """Casos aprovados no banco (CRUD da página admin.html) + os do arquivo JSON antigo, se houver."""
+    casos = casos_db.casos_aprovados()
+    if ARQUIVO_CASOS.exists():
+        casos += json.loads(ARQUIVO_CASOS.read_text(encoding="utf-8")).get("casos", [])
+    return casos
 
 
 def buscar(plataforma: str, taticas: set, texto: str, casos: list[dict] | None = None) -> list[dict]:

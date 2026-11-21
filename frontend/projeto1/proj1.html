@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <link rel="stylesheet" href="proj1.css">
     <link rel="stylesheet" href="analisar.css">
+    <link rel="stylesheet" href="conversa.css">
     <script src="proj1.js" defer></script>
     <script src="analisar.js" defer></script>
+    <script src="conversa.js" defer></script>
 </head>
 <body data-font-size="3">
 
@@ -21,7 +23,7 @@
     </div>
     <div>
       <h1>Alô Seguro</h1>
-      <p class="sr-only">Ferramentas de proteção: verifique se seus dados aparecem em vazamentos conhecidos ou analise uma mensagem ou link suspeito para saber a chance de ser golpe.</p>
+      <p class="sr-only">Ferramentas de proteção: verifique se seus dados aparecem em vazamentos conhecidos, analise uma mensagem ou link suspeito para saber a chance de ser golpe, ou converse para tirar dúvidas sobre golpes.</p>
       <span>Proteção contra vazamentos e golpes</span>
     </div>
   </div>
@@ -33,35 +35,39 @@
     <button type="button" class="aba" role="tab" id="aba-mensagem" aria-controls="painel-mensagem" aria-selected="false" tabindex="-1">
       <i class="ti ti-message-exclamation" aria-hidden="true"></i><span>Analisar mensagem</span>
     </button>
+    <button type="button" class="aba" role="tab" id="aba-conversa" aria-controls="painel-conversa" aria-selected="false" tabindex="-1">
+      <i class="ti ti-messages" aria-hidden="true"></i><span>Tirar dúvidas</span>
+    </button>
   </div>
 
   <section class="painel" id="painel-vazamento" role="tabpanel" aria-labelledby="aba-vazamento" tabindex="0">
-  <p class="intro">Verifique se seu e-mail ou telefone já apareceu em vazamentos de dados conhecidos. Se algo for encontrado, mostramos onde e o que fazer a seguir.</p>
+  <p class="intro">Verifique se seu e-mail ou telefone já apareceu em vazamentos de dados conhecidos. Se algo for encontrado, mostramos quais dados foram expostos, em qual incidente e quando, e o que fazer a seguir.</p>
 
-  <div class="demo-note">
+  <div class="demo-note" id="nota-fonte">
     <i class="ti ti-info-circle" aria-hidden="true"></i>
-    <span>Este protótipo roda em <strong style="color:var(--text-primary); font-weight:500">modo demonstração</strong>, com uma base local de exemplo — ele não consulta a internet neste momento. Para testar um resultado positivo, use <code>teste@exemplo.com</code> ou o telefone <code>(11) 99999-9999</code>. Em produção, a checagem real deve ser feita no servidor, consultando uma base como o Have I Been Pwned, sem expor chaves de API no navegador.</span>
+    <span id="nota-fonte-texto">A consulta é feita pelo servidor do Alô Seguro, nas fontes configuradas nele. Nenhuma chave de API fica no navegador.</span>
   </div>
 
   <div class="card">
     <form id="scan-form" novalidate>
       <div class="field">
-        <label for="f-nome">Nome completo</label>
-        <input type="text" id="f-nome" aria-describedby="err-nome" aria-invalid="false" required autocomplete="name" placeholder="Ex.: Maria da Silva Santos">
-        <div class="field-error" id="err-nome" role="alert">Informe seu nome completo.</div>
+        <label for="f-nome">Como podemos te chamar? <span class="opcional">(opcional)</span></label>
+        <input type="text" id="f-nome" aria-describedby="dica-nome" autocomplete="given-name" placeholder="Ex.: Maria">
+        <div class="field-hint" id="dica-nome">Usado só para personalizar o resultado. Não é enviado ao servidor.</div>
       </div>
       <div class="field">
         <label for="f-email">E-mail</label>
-        <input type="email" id="f-email" aria-describedby="err-email" aria-invalid="false" required autocomplete="email" placeholder="voce@exemplo.com">
+        <input type="email" id="f-email" aria-describedby="err-email err-contato" aria-invalid="false" autocomplete="email" placeholder="voce@exemplo.com">
         <div class="field-error" id="err-email" role="alert">Informe um e-mail válido.</div>
       </div>
       <div class="field">
         <label for="f-telefone">Telefone (com DDD)</label>
-        <input type="tel" id="f-telefone" aria-describedby="err-telefone" aria-invalid="false" required autocomplete="tel" placeholder="(11) 91234-5678">
+        <input type="tel" id="f-telefone" aria-describedby="err-telefone err-contato" aria-invalid="false" autocomplete="tel" placeholder="(11) 91234-5678">
         <div class="field-error" id="err-telefone" role="alert">Informe um telefone válido, com DDD.</div>
       </div>
+      <div class="field-error" id="err-contato" role="alert">Informe um e-mail ou um telefone (ou os dois).</div>
 
-      <p class="privacy-line"><i class="ti ti-lock" aria-hidden="true" style="vertical-align:-2px"></i> Nunca pedimos número de cartão, senha ou dados bancários. Nenhum site legítimo de verificação de vazamento precisa disso — desconfie se pedirem.</p>
+      <p class="privacy-line"><i class="ti ti-lock" aria-hidden="true" style="vertical-align:-2px"></i> Basta o e-mail, o telefone ou os dois. Não guardamos o que você consulta e nunca pedimos número de cartão, senha ou dados bancários. Nenhum site legítimo de verificação de vazamento precisa disso — desconfie se pedirem.</p>
 
       <button type="submit" class="submit" id="submit-btn">
         <i class="ti ti-search" aria-hidden="true"></i>
@@ -69,9 +75,9 @@
       </button>
     </form>
 
-    <div class="scan" id="scan-box" role="status">
-      <div class="scan-step" id="step-1"><div class="dot"></div><span>Verificando e-mail em bases de vazamento conhecidas</span></div>
-      <div class="scan-step" id="step-2"><div class="dot"></div><span>Verificando telefone em bases de vazamento conhecidas</span></div>
+    <div class="scan" id="scan-box" role="status" aria-live="polite">
+      <div class="scan-step" id="step-email"><div class="dot"></div><span>Consultando e-mail nas fontes de vazamento…</span></div>
+      <div class="scan-step" id="step-telefone"><div class="dot"></div><span>Consultando telefone nas fontes de vazamento…</span></div>
     </div>
 
     <div class="result" id="result-box"></div>
@@ -137,6 +143,48 @@
 
       <button type="button" class="reset-link" id="analise-nova" style="display:none">
         <i class="ti ti-arrow-left" aria-hidden="true"></i> Analisar outra mensagem
+      </button>
+    </div>
+  </section>
+
+  <section class="painel" id="painel-conversa" role="tabpanel" aria-labelledby="aba-conversa" tabindex="0" hidden>
+    <p class="intro">Recebeu uma ligação, mensagem ou pedido estranho? Acha que caiu em um golpe? Converse do seu jeito: explicamos com calma se parece golpe e o que fazer.</p>
+
+    <div class="demo-note">
+      <i class="ti ti-shield-lock" aria-hidden="true"></i>
+      <span>Não escreva senhas, números de cartão ou documentos. Antes de enviar à IA, ocultamos CPF, telefone, e-mail e cartão. A conversa <strong style="color:var(--text-primary); font-weight:500">não fica guardada</strong>: ela some quando você fecha a página.</span>
+    </div>
+
+    <div class="card conversa-card">
+      <div class="conversa-contexto" id="conversa-contexto" hidden></div>
+
+      <ol class="conversa-mensagens" id="conversa-mensagens" role="log" aria-live="polite" aria-label="Conversa com o Alô Seguro"></ol>
+
+      <div class="conversa-pensando" id="conversa-pensando" role="status" hidden>
+        <span class="pontinhos" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>Pensando na resposta…</span>
+      </div>
+
+      <div class="conversa-sugestoes" id="conversa-sugestoes" role="group" aria-label="Perguntas sugeridas"></div>
+
+      <form id="conversa-form" class="conversa-form" novalidate>
+        <div class="field">
+          <label for="f-conversa">Escreva sua dúvida ou cole a mensagem que recebeu</label>
+          <textarea id="f-conversa" rows="3" maxlength="2000" aria-describedby="dica-conversa conversa-restantes err-conversa" aria-invalid="false" placeholder="Ex.: Ligaram dizendo que são do banco e pediram para eu instalar um aplicativo."></textarea>
+          <div class="campo-rodape">
+            <span class="field-hint" id="dica-conversa">Enter envia. Shift + Enter pula linha.</span>
+            <span class="contador" id="conversa-restantes"></span>
+          </div>
+          <div class="field-error" id="err-conversa" role="alert"></div>
+        </div>
+        <button type="submit" class="submit" id="conversa-enviar">
+          <i class="ti ti-send" aria-hidden="true"></i>
+          <span>Enviar</span>
+        </button>
+      </form>
+
+      <button type="button" class="reset-link" id="conversa-nova">
+        <i class="ti ti-refresh" aria-hidden="true"></i> Começar nova conversa
       </button>
     </div>
   </section>

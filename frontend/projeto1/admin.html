@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>Moderação de casos · Alô Seguro</title>
+    <link rel="icon" type="image/png" href="logo-grupo5-avatar.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+    <link rel="stylesheet" href="proj1.css">
+    <link rel="stylesheet" href="analisar.css">
+    <link rel="stylesheet" href="admin.css">
+    <script src="admin.js" defer></script>
+</head>
+<body data-font-size="3">
+
+<main class="app app-admin">
+  <div class="brand">
+    <div class="brand-mark">
+      <img src="logo-grupo5-avatar.png" alt="" width="40" height="40">
+    </div>
+    <div>
+      <h1>Moderação de casos</h1>
+      <span>Casos reais que ensinam o detector de golpes</span>
+    </div>
+  </div>
+
+  <div class="demo-note">
+    <i class="ti ti-lock" aria-hidden="true"></i>
+    <span>Esta página só funciona no computador que roda o servidor. Os textos são <strong style="color:var(--text-primary); font-weight:500">anonimizados ao salvar</strong> (CPF, telefone, e-mail, cartão). Só casos <strong style="color:var(--text-primary); font-weight:500">aprovados</strong> e não reservados para teste entram no prompt da IA.</span>
+  </div>
+
+  <div class="aviso aviso-sistema" id="admin-erro-geral" role="alert" hidden>
+    <i class="ti ti-alert-triangle" aria-hidden="true"></i><span id="admin-erro-geral-texto"></span>
+  </div>
+
+  <!-- ===================== Formulário ===================== -->
+  <section class="card" aria-labelledby="titulo-form">
+    <h2 class="admin-titulo" id="titulo-form">Novo caso</h2>
+    <form id="caso-form" novalidate>
+      <input type="hidden" id="caso-id">
+
+      <div class="admin-grade">
+        <div class="field">
+          <label for="caso-plataforma">Plataforma</label>
+          <select id="caso-plataforma" required></select>
+        </div>
+        <fieldset class="field admin-rotulo">
+          <legend>Este caso é</legend>
+          <label><input type="radio" name="rotulo" value="golpe" checked> Golpe</label>
+          <label><input type="radio" name="rotulo" value="nao_golpe"> Não é golpe</label>
+        </fieldset>
+      </div>
+
+      <div class="field">
+        <label for="caso-texto">Texto da mensagem</label>
+        <textarea id="caso-texto" rows="5" maxlength="2000" aria-describedby="dica-texto" required></textarea>
+        <div class="campo-rodape">
+          <span class="field-hint" id="dica-texto">Dados pessoais serão trocados por marcadores como [CPF] ao salvar.</span>
+          <button type="button" class="btn-secundario" id="btn-sugerir"><i class="ti ti-wand" aria-hidden="true"></i> Sugerir táticas</button>
+        </div>
+      </div>
+
+      <fieldset class="field">
+        <legend>Táticas de manipulação presentes</legend>
+        <div class="admin-taticas" id="caso-taticas"></div>
+      </fieldset>
+
+      <div class="admin-grade">
+        <div class="field">
+          <label for="caso-golpe">Golpe parecido da base (opcional)</label>
+          <input type="text" id="caso-golpe" list="lista-golpes" placeholder="Ex.: wa001" autocomplete="off" aria-describedby="nome-golpe">
+          <datalist id="lista-golpes"></datalist>
+          <span class="field-hint" id="nome-golpe"></span>
+        </div>
+        <div class="field">
+          <label for="caso-status">Status</label>
+          <select id="caso-status">
+            <option value="pendente">Pendente</option>
+            <option value="aprovado">Aprovado (vai para a IA)</option>
+            <option value="rejeitado">Rejeitado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="caso-licao">Lição (o que este caso ensina, em uma frase)</label>
+        <input type="text" id="caso-licao" maxlength="300" placeholder="Ex.: O golpista citou um boleto com horário limite para criar pressa.">
+      </div>
+
+      <label class="admin-check">
+        <input type="checkbox" id="caso-reservado">
+        <span>Reservar para teste <span class="field-hint">(não vai para a IA; serve para medir se o detector acerta, cerca de 1 em cada 5 aprovados)</span></span>
+      </label>
+
+      <div class="field-error" id="caso-erro" role="alert"></div>
+      <p class="admin-ok" id="caso-ok" role="status"></p>
+
+      <div class="admin-acoes">
+        <button type="submit" class="submit" id="btn-salvar"><i class="ti ti-device-floppy" aria-hidden="true"></i><span>Salvar caso</span></button>
+        <button type="button" class="btn-secundario" id="btn-cancelar" hidden>Cancelar edição</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ===================== Lista ===================== -->
+  <section class="card admin-lista" aria-labelledby="titulo-lista">
+    <h2 class="admin-titulo" id="titulo-lista">Casos cadastrados</h2>
+
+    <div class="admin-filtros" role="group" aria-label="Filtros">
+      <div class="field">
+        <label for="filtro-status">Status</label>
+        <select id="filtro-status">
+          <option value="">Todos</option>
+          <option value="pendente">Pendentes</option>
+          <option value="aprovado">Aprovados</option>
+          <option value="rejeitado">Rejeitados</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="filtro-plataforma">Plataforma</label>
+        <select id="filtro-plataforma"><option value="">Todas</option></select>
+      </div>
+      <div class="field admin-busca">
+        <label for="filtro-busca">Buscar no texto ou na lição</label>
+        <input type="search" id="filtro-busca" maxlength="100">
+      </div>
+    </div>
+
+    <p class="admin-contagem" id="admin-contagem" aria-live="polite"></p>
+    <ul class="admin-casos" id="admin-casos"></ul>
+  </section>
+
+  <p class="footnote"><a href="proj1.html">Voltar para o Alô Seguro</a></p>
+</main>
+</body>
+</html>

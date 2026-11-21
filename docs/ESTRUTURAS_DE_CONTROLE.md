@@ -85,17 +85,17 @@ if len(fila) >= config.LIMITE_POR_MINUTO:
 ```
 
 ### 8. JavaScript: `forEach` para mostrar cada red flag
-[`analisar.js`, linha 190](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L190)
+[`analisar.js`, linha 190](../frontend/projeto1/analisar.js#L190)
 
 `dados.red_flags.forEach(...)` cria um cartão na tela para cada sinal de alerta que a IA encontrou.
 
 ### 9. JavaScript: `if / else if` para navegar nas abas pelo teclado
-[`analisar.js`, linha 76](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L76)
+[`analisar.js`, linha 76](../frontend/projeto1/analisar.js#L76)
 
 Seta para a direita, seta para a esquerda, Home e End mudam de aba (acessibilidade).
 
 ### 10. Código original do grupo
-[`proj1.js`, linhas 133 e 197](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L197)
+[`proj1.js`, linhas 133 e 197](../frontend/projeto1/proj1.js#L197)
 
 `achados.forEach(...)` mostra cada vazamento encontrado, e `if (achados.length > 0) … else …`
 escolhe entre a tela de "encontramos exposições" e a de "nada encontrado".
@@ -113,8 +113,8 @@ escolhe entre a tela de "encontramos exposições" e a de "nada encontrado".
 | `backend/app/agente.py` | 3 | 7 |
 | `backend/app/config.py` | 0 | 2 |
 | `backend/app/listar_modelos.py` | 4 | 1 |
-| `projeto1-acessibilidade-corrigido/projeto1/analisar.js` | 44 | 13 |
-| `projeto1-acessibilidade-corrigido/projeto1/proj1.js` | 15 | 4 |
+| `frontend/projeto1/analisar.js` | 44 | 13 |
+| `frontend/projeto1/proj1.js` | 15 | 4 |
 | **Total** | **177** | **87** |
 
 ### `backend/app/main.py`
@@ -355,88 +355,88 @@ escolhe entre a tela de "encontramos exposições" e a de "nada encontrado".
 | [13](../backend/app/listar_modelos.py#L13) | Repetição `for` | `for nome in gemini.listar_modelos():` |
 | [14](../backend/app/listar_modelos.py#L14) | Condicional `if`/`elif` | `if "flash" in nome:` |
 
-### `projeto1-acessibilidade-corrigido/projeto1/analisar.js`
+### `frontend/projeto1/analisar.js`
 
 | Linha | Estrutura | Código |
 | --- | --- | --- |
-| [12](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L12) | Condicional (ternário `c ? a : b`) | `: (location.protocol === 'file:' \|\| location.port === '5500' \|\| location.port === '5501...` |
-| [44](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L44) | Repetição `forEach` | `Object.keys(atributos \|\| {}).forEach(function (nome) {` |
-| [45](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L45) | Condicional `if` | `if (nome === 'texto') elemento.textContent = atributos[nome];` |
-| [46](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L46) | Condicional `else` | `else elemento.setAttribute(nome, atributos[nome]);` |
-| [48](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L48) | Repetição `forEach` | `(filhos \|\| []).forEach(function (filho) {` |
-| [49](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L49) | Condicional `if` | `if (filho) elemento.appendChild(typeof filho === 'string' ? document.createTextNode(fil...` |
-| [49](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L49) | Condicional (ternário `c ? a : b`) | `if (filho) elemento.appendChild(typeof filho === 'string' ? document.createTextNode(fil...` |
-| [62](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L62) | Repetição `forEach` | `abas.forEach(function (outra) {` |
-| [65](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L65) | Condicional (ternário `c ? a : b`) | `outra.tabIndex = selecionada ? 0 : -1;` |
-| [68](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L68) | Condicional `if` | `if (darFoco) aba.focus();` |
-| [72](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L72) | Repetição `forEach` | `abas.forEach(function (aba, indice) {` |
-| [76](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L76) | Condicional `if` | `if (evento.key === 'ArrowRight') destino = abas[(indice + 1) % abas.length];` |
-| [77](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L77) | Condicional `else if` | `else if (evento.key === 'ArrowLeft') destino = abas[(indice - 1 + abas.length) % abas.l...` |
-| [78](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L78) | Condicional `else if` | `else if (evento.key === 'Home') destino = abas[0];` |
-| [79](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L79) | Condicional `else if` | `else if (evento.key === 'End') destino = abas[abas.length - 1];` |
-| [80](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L80) | Condicional `if` | `if (destino) { evento.preventDefault(); abrirAba(destino, true); }` |
-| [84](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L84) | Condicional (ternário `c ? a : b`) | `var abaInicial = location.hash === '#analisar' ? 'aba-mensagem' : lerStorage('alo-segur...` |
-| [85](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L85) | Condicional `if` | `if (abaInicial && document.getElementById(abaInicial)) abrirAba(document.getElementById...` |
-| [103](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L103) | Condicional (ternário `c ? a : b`) | `return marcado ? marcado.value : 'redes_sociais';` |
-| [150](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L150) | Repetição `forEach` | `form.querySelectorAll('input[name="canal"]').forEach(function (opcao) {` |
-| [167](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L167) | Condicional (ternário `c ? a : b`) | `var nivel = NIVEIS[dados.nivel] ? dados.nivel : 'medio';` |
-| [187](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L187) | Repetição `forEach` | `(dados.taticas_info \|\| []).forEach(function (t) { pesoPorTatica[t.id] = t; });` |
-| [190](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L190) | Repetição `forEach` | `dados.red_flags.forEach(function (flag) {` |
-| [193](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L193) | Condicional (ternário `c ? a : b`) | `info ? el('span', { 'class': 'etiqueta ' + info.peso, texto: info.nome }) : null,` |
-| [194](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L194) | Condicional (ternário `c ? a : b`) | `flag.trecho ? el('div', { 'class': 'flag-trecho', texto: '“' + flag.trecho + '”' }) : n...` |
-| [203](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L203) | Condicional (ternário `c ? a : b`) | `var bloco = el('div', {}, [secao(dados.analise_link.length > 1 ? 'Análise dos links' : ...` |
-| [204](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L204) | Repetição `forEach` | `dados.analise_link.forEach(function (link) {` |
-| [205](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L205) | Condicional (ternário `c ? a : b`) | `var classeTipo = link.tipo === 'legitimo_provavel' ? 'ok' : (link.tipo === 'indetermina...` |
-| [207](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L207) | Repetição `forEach` | `(link.motivos \|\| []).forEach(function (motivo) { lista.appendChild(el('li', { texto: mo...` |
-| [212](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L212) | Condicional (ternário `c ? a : b`) | `link.dominio_real ? el('span', {}, ['Domínio real: ', el('code', { texto: link.dominio_...` |
-| [214](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L214) | Condicional (ternário `c ? a : b`) | `link.motivos && link.motivos.length ? lista : el('p', { 'class': 'observacao', texto: '...` |
-| [221](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L221) | Condicional (ternário `c ? a : b`) | `var lista = el(numerada ? 'ol' : 'ul', { 'class': numerada ? 'steps-list' : 'tips-list'...` |
-| [222](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L222) | Repetição `forEach` | `itens.forEach(function (texto, i) {` |
-| [224](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L224) | Condicional (ternário `c ? a : b`) | `? el('li', {}, [el('span', { 'class': 'n', texto: String(i + 1) }), el('span', { texto:...` |
-| [234](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L234) | Condicional `if` | `if (dados.aviso_ajuda) {` |
-| [239](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L239) | Condicional `if` | `if (dados.aviso_sistema) {` |
-| [247](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L247) | Condicional `if` | `if (rede && canalEscolhido() === 'redes_sociais') {` |
-| [251](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L251) | Condicional `if` | `if (dados.golpe_parecido) {` |
-| [258](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L258) | Condicional `if` | `if (dados.red_flags && dados.red_flags.length) partes.push(montarRedFlags(dados));` |
-| [260](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L260) | Condicional `if` | `if (dados.taticas_info && dados.taticas_info.length) {` |
-| [262](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L262) | Repetição `forEach` | `dados.taticas_info.forEach(function (t) {` |
-| [268](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L268) | Condicional `if` | `if (dados.dicas && dados.dicas.length) {` |
-| [274](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L274) | Condicional `if` | `if (dados.analise_link && dados.analise_link.length) partes.push(montarLinks(dados));` |
-| [275](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L275) | Condicional `if` | `if (dados.sinais_de_legitimidade && dados.sinais_de_legitimidade.length) {` |
-| [280](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L280) | Condicional (ternário `c ? a : b`) | `: (dados.nivel === 'alto' \|\| dados.nivel === 'muito_alto') ? PASSOS_SE_JA_CAIU : [];` |
-| [281](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L281) | Condicional `if` | `if (passos.length) {` |
-| [283](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L283) | Repetição `forEach` | `passos.forEach(function (texto, i) {` |
-| [287](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L287) | Condicional `if` | `if (dados.se_ja_caiu && dados.se_ja_caiu.length) detalhes.open = true;` |
-| [291](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L291) | Condicional `if` | `if (dados.observacoes) partes.push(el('p', { 'class': 'observacao', texto: dados.observ...` |
-| [296](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L296) | Condicional `if` | `if (dados.dados_ocultados > 0) {` |
-| [297](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L297) | Condicional (ternário `c ? a : b`) | `origem += ' Ocultamos ' + dados.dados_ocultados + (dados.dados_ocultados === 1 ? ' dado...` |
-| [301](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L301) | Repetição `forEach` | `partes.forEach(function (parte) { resultado.appendChild(parte); });` |
-| [304](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L304) | Condicional `if` | `if (titulo) titulo.focus();` |
-| [312](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L312) | Condicional (ternário `c ? a : b`) | `botao.querySelector('span').textContent = ativo ? 'Analisando…' : 'Analisar mensagem';` |
-| [319](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L319) | Condicional `if` | `if (texto.length < 3) {` |
-| [338](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L338) | Condicional `if` | `if (!resposta.ok) {` |
-| [339](../projeto1-acessibilidade-corrigido/projeto1/analisar.js#L339) | Condicional (ternário `c ? a : b`) | `var detalhe = typeof corpo.detail === 'string' ? corpo.detail : 'Não foi possível anali...` |
+| [12](../frontend/projeto1/analisar.js#L12) | Condicional (ternário `c ? a : b`) | `: (location.protocol === 'file:' \|\| location.port === '5500' \|\| location.port === '5501...` |
+| [44](../frontend/projeto1/analisar.js#L44) | Repetição `forEach` | `Object.keys(atributos \|\| {}).forEach(function (nome) {` |
+| [45](../frontend/projeto1/analisar.js#L45) | Condicional `if` | `if (nome === 'texto') elemento.textContent = atributos[nome];` |
+| [46](../frontend/projeto1/analisar.js#L46) | Condicional `else` | `else elemento.setAttribute(nome, atributos[nome]);` |
+| [48](../frontend/projeto1/analisar.js#L48) | Repetição `forEach` | `(filhos \|\| []).forEach(function (filho) {` |
+| [49](../frontend/projeto1/analisar.js#L49) | Condicional `if` | `if (filho) elemento.appendChild(typeof filho === 'string' ? document.createTextNode(fil...` |
+| [49](../frontend/projeto1/analisar.js#L49) | Condicional (ternário `c ? a : b`) | `if (filho) elemento.appendChild(typeof filho === 'string' ? document.createTextNode(fil...` |
+| [62](../frontend/projeto1/analisar.js#L62) | Repetição `forEach` | `abas.forEach(function (outra) {` |
+| [65](../frontend/projeto1/analisar.js#L65) | Condicional (ternário `c ? a : b`) | `outra.tabIndex = selecionada ? 0 : -1;` |
+| [68](../frontend/projeto1/analisar.js#L68) | Condicional `if` | `if (darFoco) aba.focus();` |
+| [72](../frontend/projeto1/analisar.js#L72) | Repetição `forEach` | `abas.forEach(function (aba, indice) {` |
+| [76](../frontend/projeto1/analisar.js#L76) | Condicional `if` | `if (evento.key === 'ArrowRight') destino = abas[(indice + 1) % abas.length];` |
+| [77](../frontend/projeto1/analisar.js#L77) | Condicional `else if` | `else if (evento.key === 'ArrowLeft') destino = abas[(indice - 1 + abas.length) % abas.l...` |
+| [78](../frontend/projeto1/analisar.js#L78) | Condicional `else if` | `else if (evento.key === 'Home') destino = abas[0];` |
+| [79](../frontend/projeto1/analisar.js#L79) | Condicional `else if` | `else if (evento.key === 'End') destino = abas[abas.length - 1];` |
+| [80](../frontend/projeto1/analisar.js#L80) | Condicional `if` | `if (destino) { evento.preventDefault(); abrirAba(destino, true); }` |
+| [84](../frontend/projeto1/analisar.js#L84) | Condicional (ternário `c ? a : b`) | `var abaInicial = location.hash === '#analisar' ? 'aba-mensagem' : lerStorage('alo-segur...` |
+| [85](../frontend/projeto1/analisar.js#L85) | Condicional `if` | `if (abaInicial && document.getElementById(abaInicial)) abrirAba(document.getElementById...` |
+| [103](../frontend/projeto1/analisar.js#L103) | Condicional (ternário `c ? a : b`) | `return marcado ? marcado.value : 'redes_sociais';` |
+| [150](../frontend/projeto1/analisar.js#L150) | Repetição `forEach` | `form.querySelectorAll('input[name="canal"]').forEach(function (opcao) {` |
+| [167](../frontend/projeto1/analisar.js#L167) | Condicional (ternário `c ? a : b`) | `var nivel = NIVEIS[dados.nivel] ? dados.nivel : 'medio';` |
+| [187](../frontend/projeto1/analisar.js#L187) | Repetição `forEach` | `(dados.taticas_info \|\| []).forEach(function (t) { pesoPorTatica[t.id] = t; });` |
+| [190](../frontend/projeto1/analisar.js#L190) | Repetição `forEach` | `dados.red_flags.forEach(function (flag) {` |
+| [193](../frontend/projeto1/analisar.js#L193) | Condicional (ternário `c ? a : b`) | `info ? el('span', { 'class': 'etiqueta ' + info.peso, texto: info.nome }) : null,` |
+| [194](../frontend/projeto1/analisar.js#L194) | Condicional (ternário `c ? a : b`) | `flag.trecho ? el('div', { 'class': 'flag-trecho', texto: '“' + flag.trecho + '”' }) : n...` |
+| [203](../frontend/projeto1/analisar.js#L203) | Condicional (ternário `c ? a : b`) | `var bloco = el('div', {}, [secao(dados.analise_link.length > 1 ? 'Análise dos links' : ...` |
+| [204](../frontend/projeto1/analisar.js#L204) | Repetição `forEach` | `dados.analise_link.forEach(function (link) {` |
+| [205](../frontend/projeto1/analisar.js#L205) | Condicional (ternário `c ? a : b`) | `var classeTipo = link.tipo === 'legitimo_provavel' ? 'ok' : (link.tipo === 'indetermina...` |
+| [207](../frontend/projeto1/analisar.js#L207) | Repetição `forEach` | `(link.motivos \|\| []).forEach(function (motivo) { lista.appendChild(el('li', { texto: mo...` |
+| [212](../frontend/projeto1/analisar.js#L212) | Condicional (ternário `c ? a : b`) | `link.dominio_real ? el('span', {}, ['Domínio real: ', el('code', { texto: link.dominio_...` |
+| [214](../frontend/projeto1/analisar.js#L214) | Condicional (ternário `c ? a : b`) | `link.motivos && link.motivos.length ? lista : el('p', { 'class': 'observacao', texto: '...` |
+| [221](../frontend/projeto1/analisar.js#L221) | Condicional (ternário `c ? a : b`) | `var lista = el(numerada ? 'ol' : 'ul', { 'class': numerada ? 'steps-list' : 'tips-list'...` |
+| [222](../frontend/projeto1/analisar.js#L222) | Repetição `forEach` | `itens.forEach(function (texto, i) {` |
+| [224](../frontend/projeto1/analisar.js#L224) | Condicional (ternário `c ? a : b`) | `? el('li', {}, [el('span', { 'class': 'n', texto: String(i + 1) }), el('span', { texto:...` |
+| [234](../frontend/projeto1/analisar.js#L234) | Condicional `if` | `if (dados.aviso_ajuda) {` |
+| [239](../frontend/projeto1/analisar.js#L239) | Condicional `if` | `if (dados.aviso_sistema) {` |
+| [247](../frontend/projeto1/analisar.js#L247) | Condicional `if` | `if (rede && canalEscolhido() === 'redes_sociais') {` |
+| [251](../frontend/projeto1/analisar.js#L251) | Condicional `if` | `if (dados.golpe_parecido) {` |
+| [258](../frontend/projeto1/analisar.js#L258) | Condicional `if` | `if (dados.red_flags && dados.red_flags.length) partes.push(montarRedFlags(dados));` |
+| [260](../frontend/projeto1/analisar.js#L260) | Condicional `if` | `if (dados.taticas_info && dados.taticas_info.length) {` |
+| [262](../frontend/projeto1/analisar.js#L262) | Repetição `forEach` | `dados.taticas_info.forEach(function (t) {` |
+| [268](../frontend/projeto1/analisar.js#L268) | Condicional `if` | `if (dados.dicas && dados.dicas.length) {` |
+| [274](../frontend/projeto1/analisar.js#L274) | Condicional `if` | `if (dados.analise_link && dados.analise_link.length) partes.push(montarLinks(dados));` |
+| [275](../frontend/projeto1/analisar.js#L275) | Condicional `if` | `if (dados.sinais_de_legitimidade && dados.sinais_de_legitimidade.length) {` |
+| [280](../frontend/projeto1/analisar.js#L280) | Condicional (ternário `c ? a : b`) | `: (dados.nivel === 'alto' \|\| dados.nivel === 'muito_alto') ? PASSOS_SE_JA_CAIU : [];` |
+| [281](../frontend/projeto1/analisar.js#L281) | Condicional `if` | `if (passos.length) {` |
+| [283](../frontend/projeto1/analisar.js#L283) | Repetição `forEach` | `passos.forEach(function (texto, i) {` |
+| [287](../frontend/projeto1/analisar.js#L287) | Condicional `if` | `if (dados.se_ja_caiu && dados.se_ja_caiu.length) detalhes.open = true;` |
+| [291](../frontend/projeto1/analisar.js#L291) | Condicional `if` | `if (dados.observacoes) partes.push(el('p', { 'class': 'observacao', texto: dados.observ...` |
+| [296](../frontend/projeto1/analisar.js#L296) | Condicional `if` | `if (dados.dados_ocultados > 0) {` |
+| [297](../frontend/projeto1/analisar.js#L297) | Condicional (ternário `c ? a : b`) | `origem += ' Ocultamos ' + dados.dados_ocultados + (dados.dados_ocultados === 1 ? ' dado...` |
+| [301](../frontend/projeto1/analisar.js#L301) | Repetição `forEach` | `partes.forEach(function (parte) { resultado.appendChild(parte); });` |
+| [304](../frontend/projeto1/analisar.js#L304) | Condicional `if` | `if (titulo) titulo.focus();` |
+| [312](../frontend/projeto1/analisar.js#L312) | Condicional (ternário `c ? a : b`) | `botao.querySelector('span').textContent = ativo ? 'Analisando…' : 'Analisar mensagem';` |
+| [319](../frontend/projeto1/analisar.js#L319) | Condicional `if` | `if (texto.length < 3) {` |
+| [338](../frontend/projeto1/analisar.js#L338) | Condicional `if` | `if (!resposta.ok) {` |
+| [339](../frontend/projeto1/analisar.js#L339) | Condicional (ternário `c ? a : b`) | `var detalhe = typeof corpo.detail === 'string' ? corpo.detail : 'Não foi possível anali...` |
 
-### `projeto1-acessibilidade-corrigido/projeto1/proj1.js`
+### `frontend/projeto1/proj1.js`
 
 | Linha | Estrutura | Código |
 | --- | --- | --- |
-| [24](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L24) | Condicional (ternário `c ? a : b`) | `themeToggle.querySelector('span').textContent = dark ? 'Modo claro' : 'Modo escuro';` |
-| [25](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L25) | Condicional (ternário `c ? a : b`) | `themeToggle.querySelector('i').className = dark ? 'ti ti-sun' : 'ti ti-moon';` |
-| [38](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L38) | Condicional (ternário `c ? a : b`) | `applyTheme(savedTheme === 'light' ? 'light' : 'dark');` |
-| [40](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L40) | Condicional (ternário `c ? a : b`) | `themeToggle.addEventListener('click', function () { applyTheme(document.documentElement...` |
-| [41](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L41) | Condicional `if` | `decreaseFont.addEventListener('click', function () { if (fontSize > 1) applyFontSize(fo...` |
-| [42](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L42) | Condicional `if` | `increaseFont.addEventListener('click', function () { if (fontSize < 5) applyFontSize(fo...` |
-| [70](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L70) | Condicional `if` | `if ((d.length === 12 \|\| d.length === 13) && d.indexOf('55') === 0) d = d.slice(2);` |
-| [75](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L75) | Repetição `forEach` | `[step1, step2].forEach(function (s) {` |
-| [110](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L110) | Repetição `forEach` | `['f-nome', 'f-email', 'f-telefone'].forEach(function (id) {` |
-| [122](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L122) | Condicional `if` | `if (emailAchados) achados = achados.concat(emailAchados);` |
-| [123](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L123) | Condicional `if` | `if (telAchados) achados = achados.concat(telAchados);` |
-| [130](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L130) | Condicional (ternário `c ? a : b`) | `'<h2>Encontramos ' + achados.length + (achados.length === 1 ? ' exposição' : ' exposiçõ...` |
-| [133](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L133) | Repetição `forEach` | `achados.forEach(function (a) {` |
-| [168](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L168) | Condicional `if` | `if (!validate()) {` |
-| [170](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L170) | Condicional `if` | `if (primeiroInvalido) primeiroInvalido.focus();` |
-| [197](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L197) | Condicional `if` | `if (achados.length > 0) {` |
-| [199](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L199) | Condicional `else` | `} else {` |
-| [204](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L204) | Condicional `if` | `if (titulo) { titulo.setAttribute('tabindex', '-1'); titulo.focus(); }` |
-| [217](../projeto1-acessibilidade-corrigido/projeto1/proj1.js#L217) | Repetição `forEach` | `['f-nome', 'f-email', 'f-telefone'].forEach(function (id) {` |
+| [24](../frontend/projeto1/proj1.js#L24) | Condicional (ternário `c ? a : b`) | `themeToggle.querySelector('span').textContent = dark ? 'Modo claro' : 'Modo escuro';` |
+| [25](../frontend/projeto1/proj1.js#L25) | Condicional (ternário `c ? a : b`) | `themeToggle.querySelector('i').className = dark ? 'ti ti-sun' : 'ti ti-moon';` |
+| [38](../frontend/projeto1/proj1.js#L38) | Condicional (ternário `c ? a : b`) | `applyTheme(savedTheme === 'light' ? 'light' : 'dark');` |
+| [40](../frontend/projeto1/proj1.js#L40) | Condicional (ternário `c ? a : b`) | `themeToggle.addEventListener('click', function () { applyTheme(document.documentElement...` |
+| [41](../frontend/projeto1/proj1.js#L41) | Condicional `if` | `decreaseFont.addEventListener('click', function () { if (fontSize > 1) applyFontSize(fo...` |
+| [42](../frontend/projeto1/proj1.js#L42) | Condicional `if` | `increaseFont.addEventListener('click', function () { if (fontSize < 5) applyFontSize(fo...` |
+| [70](../frontend/projeto1/proj1.js#L70) | Condicional `if` | `if ((d.length === 12 \|\| d.length === 13) && d.indexOf('55') === 0) d = d.slice(2);` |
+| [75](../frontend/projeto1/proj1.js#L75) | Repetição `forEach` | `[step1, step2].forEach(function (s) {` |
+| [110](../frontend/projeto1/proj1.js#L110) | Repetição `forEach` | `['f-nome', 'f-email', 'f-telefone'].forEach(function (id) {` |
+| [122](../frontend/projeto1/proj1.js#L122) | Condicional `if` | `if (emailAchados) achados = achados.concat(emailAchados);` |
+| [123](../frontend/projeto1/proj1.js#L123) | Condicional `if` | `if (telAchados) achados = achados.concat(telAchados);` |
+| [130](../frontend/projeto1/proj1.js#L130) | Condicional (ternário `c ? a : b`) | `'<h2>Encontramos ' + achados.length + (achados.length === 1 ? ' exposição' : ' exposiçõ...` |
+| [133](../frontend/projeto1/proj1.js#L133) | Repetição `forEach` | `achados.forEach(function (a) {` |
+| [168](../frontend/projeto1/proj1.js#L168) | Condicional `if` | `if (!validate()) {` |
+| [170](../frontend/projeto1/proj1.js#L170) | Condicional `if` | `if (primeiroInvalido) primeiroInvalido.focus();` |
+| [197](../frontend/projeto1/proj1.js#L197) | Condicional `if` | `if (achados.length > 0) {` |
+| [199](../frontend/projeto1/proj1.js#L199) | Condicional `else` | `} else {` |
+| [204](../frontend/projeto1/proj1.js#L204) | Condicional `if` | `if (titulo) { titulo.setAttribute('tabindex', '-1'); titulo.focus(); }` |
+| [217](../frontend/projeto1/proj1.js#L217) | Repetição `forEach` | `['f-nome', 'f-email', 'f-telefone'].forEach(function (id) {` |

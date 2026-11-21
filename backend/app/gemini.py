@@ -79,7 +79,8 @@ def _ler_resposta(dados: dict) -> dict:
         raise _ModeloIndisponivel("A IA respondeu num formato inválido.") from erro
 
 
-def gerar_json(prompt_sistema: str, mensagem_usuario: str, esquema: dict | None = None) -> dict:
+def gerar_json(prompt_sistema: str, mensagem_usuario: str, esquema: dict | None = None,
+               tempo_maximo: float | None = None) -> dict:
     if not configurado():
         raise GeminiErro("A chave da IA não está configurada no servidor.")
 
@@ -96,16 +97,21 @@ def gerar_json(prompt_sistema: str, mensagem_usuario: str, esquema: dict | None 
     # (sobrecarga, limite, modelo inexistente ou resposta ilegível).
     # Tudo isso respeita um tempo máximo total, para a pessoa não ficar esperando demais.
     ultimo_erro = None
-    prazo_final = time.monotonic() + config.GEMINI_TEMPO_MAXIMO
+    prazo_final = time.monotonic() + (tempo_maximo or config.GEMINI_TEMPO_MAXIMO)
     for rodada in range(config.GEMINI_RODADAS):
         if rodada > 0:
             time.sleep(config.GEMINI_ESPERA_SEGUNDOS)  # picos de uso costumam passar rápido
-        for modelo in config.GEMINI_MODELOS:
+        for posicao, modelo in enumerate(config.GEMINI_MODELOS):
             tempo_restante = prazo_final - time.monotonic()
             if tempo_restante < 3:
                 raise GeminiErro("A IA demorou demais para responder.")
+            # Um modelo travado não pode gastar o prazo todo: se ainda há outro para tentar,
+            # ele fica com no máximo 60% do tempo que sobra (no plano gratuito, o modelo
+            # principal costuma ficar sobrecarregado e o reserva responde rápido).
+            ultima_chance = rodada == config.GEMINI_RODADAS - 1 and posicao == len(config.GEMINI_MODELOS) - 1
+            limite = tempo_restante if ultima_chance else tempo_restante * 0.6
             try:
-                return _ler_resposta(_chamar_modelo(modelo, corpo, min(config.GEMINI_TIMEOUT, tempo_restante)))
+                return _ler_resposta(_chamar_modelo(modelo, corpo, min(config.GEMINI_TIMEOUT, limite)))
             except _ModeloIndisponivel as erro:
                 ultimo_erro = erro
     raise GeminiErro(str(ultimo_erro))

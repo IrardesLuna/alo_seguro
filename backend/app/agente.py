@@ -158,16 +158,113 @@ def montar_prompt_sistema(plataforma: str, casos_similares: str) -> str:
     return prompt
 
 
+def _sem_tags_da_analise(texto: str) -> str:
+    """Impede que o texto colado "feche" as tags e finja ser instrução."""
+    return (texto.replace("<mensagem_recebida>", "[mensagem_recebida]")
+            .replace("</mensagem_recebida>", "[/mensagem_recebida]")
+            .replace("<pre_analise_automatica>", "[pre_analise_automatica]")
+            .replace("</pre_analise_automatica>", "[/pre_analise_automatica]"))
+
+
 def montar_mensagem_usuario(texto: str, pre_analise: dict) -> str:
-    # Impede que o texto colado "feche" as tags e finja ser instrução.
-    texto_seguro = (texto.replace("<mensagem_recebida>", "[mensagem_recebida]")
-                    .replace("</mensagem_recebida>", "[/mensagem_recebida]")
-                    .replace("<pre_analise_automatica>", "[pre_analise_automatica]")
-                    .replace("</pre_analise_automatica>", "[/pre_analise_automatica]"))
+    # A pré-análise copia trechos do texto colado, então também passa pela proteção.
     return (
         "<pre_analise_automatica>\n"
-        + json.dumps(pre_analise, ensure_ascii=False, indent=1)
+        + _sem_tags_da_analise(json.dumps(pre_analise, ensure_ascii=False, indent=1))
         + "\n</pre_analise_automatica>\n\n<mensagem_recebida>\n"
-        + texto_seguro
+        + _sem_tags_da_analise(texto)
         + "\n</mensagem_recebida>"
     )
+
+
+# ---------------------------------------------------------------------------
+# Orientador de vazamentos (POST /api/v1/check) — prompt em agente/prompt_vazamento.md
+# ---------------------------------------------------------------------------
+ESQUEMA_VAZAMENTO = {
+    "type": "OBJECT",
+    "properties": {
+        "resumo": _TEXTO,
+        "ordem_recomendacoes": _LISTA_DE_TEXTOS,
+        "explicacoes": {"type": "ARRAY", "items": {
+            "type": "OBJECT",
+            "properties": {"id": _TEXTO, "por_que": _TEXTO},
+            "required": ["id", "por_que"],
+        }},
+    },
+    "required": ["resumo", "ordem_recomendacoes", "explicacoes"],
+    "propertyOrdering": ["resumo", "ordem_recomendacoes", "explicacoes"],
+}
+
+
+def montar_prompt_vazamento(catalogo: dict[str, str]) -> str:
+    """catalogo: {id: título} das recomendações que o backend sabe mostrar."""
+    linhas = "\n".join(f"- {id_}: {titulo}" for id_, titulo in catalogo.items())
+    prompt = _modelo_prompt("prompt_vazamento.md")
+    return (prompt.replace("{{CATALOGO_RECOMENDACOES}}", linhas)
+            .replace("{{DATA_ATUAL}}", date.today().strftime("%d/%m/%Y")))
+
+
+def montar_mensagem_vazamento(resultado: dict) -> str:
+    """resultado: só metadados (nunca o e-mail ou telefone consultado)."""
+    conteudo = json.dumps(resultado, ensure_ascii=False, indent=1)
+    conteudo = conteudo.replace("<resultado_consulta>", "[resultado_consulta]").replace(
+        "</resultado_consulta>", "[/resultado_consulta]")
+    return f"<resultado_consulta>\n{conteudo}\n</resultado_consulta>"
+
+
+# ---------------------------------------------------------------------------
+# Conversa Segura (POST /api/v1/conversa) — prompt em agente/prompt_conversa.md
+# ---------------------------------------------------------------------------
+NIVEIS_CONVERSA = ["baixo", "medio", "alto", "muito_alto", "sem_avaliacao"]
+ESQUEMA_CONVERSA = {
+    "type": "OBJECT",
+    "properties": {
+        "resposta": _TEXTO,
+        "nivel_risco": {"type": "STRING", "enum": NIVEIS_CONVERSA},
+        "sugestoes": {"type": "ARRAY", "items": _TEXTO, "maxItems": 3},
+        "precisa_ajuda": {"type": "BOOLEAN"},
+    },
+    "required": ["resposta", "nivel_risco", "sugestoes", "precisa_ajuda"],
+    "propertyOrdering": ["resposta", "nivel_risco", "sugestoes", "precisa_ajuda"],
+}
+
+
+@lru_cache
+def conhecimento_compartilhado() -> str:
+    """Seções 3 e 4 do prompt_sistema.md (engenharia social e o que instituições nunca fazem)."""
+    texto = _modelo_prompt("prompt_sistema.md")
+    inicio, fim = texto.find("## 3."), texto.find("## 5.")
+    if inicio == -1 or fim == -1:
+        raise ValueError("prompt_sistema.md mudou: não encontrei as seções 3 e 4")
+    return texto[inicio:fim].strip().replace("## ", "### ")
+
+
+def montar_prompt_conversa() -> str:
+    return (_modelo_prompt("prompt_conversa.md")
+            .replace("{{CONHECIMENTO}}", conhecimento_compartilhado())
+            .replace("{{DATA_ATUAL}}", date.today().strftime("%d/%m/%Y")))
+
+
+_TAGS_CONVERSA = ("conversa", "fala", "analise_anterior", "pre_analise_automatica")
+
+
+def _neutralizar_tags(texto: str) -> str:
+    """Impede que o texto da pessoa "feche" as tags e finja ser instrução."""
+    for tag in _TAGS_CONVERSA:
+        texto = texto.replace(f"<{tag}", f"[{tag}").replace(f"</{tag}>", f"[/{tag}]")
+    return texto
+
+
+def montar_mensagem_conversa(historico: list[dict], pre_analise: dict, contexto: dict | None) -> str:
+    partes = []
+    if contexto:
+        partes.append("<analise_anterior>\n" + _neutralizar_tags(json.dumps(contexto, ensure_ascii=False))
+                      + "\n</analise_anterior>")
+    # A pré-análise copia trechos da fala da pessoa: também precisa ser neutralizada.
+    partes.append("<pre_analise_automatica>\n"
+                  + _neutralizar_tags(json.dumps(pre_analise, ensure_ascii=False, indent=1))
+                  + "\n</pre_analise_automatica>")
+    falas = [f'<fala autor="{"pessoa" if m["papel"] == "usuario" else "conversa_segura"}">\n'
+             f'{_neutralizar_tags(m["texto"])}\n</fala>' for m in historico]
+    partes.append("<conversa>\n" + "\n".join(falas) + "\n</conversa>")
+    return "\n\n".join(partes)

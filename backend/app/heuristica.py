@@ -78,6 +78,10 @@ REGRAS = {
         r"\b(central de (atendimento|seguranca|relacionamento)|gerente (da sua conta|do banco)|banco central|receita federal|inss|detran|policia (civil|federal|militar)|delegacia|delegado|tribunal|justica|advogad[oa]|escritorio de advocacia|correios|gov\.?br|governo federal|serasa|caixa economica|suporte tecnico|equipe (de )?(suporte|seguranca)|team snapchat|discord (staff|safety|trust)|meta (support|verified)|suporte do (whatsapp|instagram|discord|snapchat))\b",
         r"\b(nubank|itau|bradesco|santander|banco do brasil|mercado (livre|pago)|shopee|amazon|netflix|microsoft|apple|paypal|ifood|picpay)\b",
         r"\bfala com o (staff|suporte|admin|moderador|atendente)\b|\b(staff|admin|moderador)\b.{0,30}\b(discord|servidor|suporte)\b",
+        # Como a pessoa descreve o contato: "ligaram do banco", "aqui é da central do cartão", "disse ser do banco".
+        r"\b(ligaram|ligou|me ligam|mandaram|mandou|disse\w*|dizendo|falou|falaram|se (diz|disse|apresent\w*)|aqui e|sou|somos)\b"
+        r".{0,25}\b(d[oa]|ser d[oa]) (banco|central|cartao|operadora|seguranca do banco)\b",
+        r"\b(funcionari[oa]|atendente|gerente)\b.{0,15}\b(d[oa]) (banco|cartao)\b",
     ],
     "troca_de_canal": [
         r"(numero|celular|chip|whats|whatsapp|zap|conta|perfil) nov[oa]",

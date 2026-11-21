@@ -1,0 +1,61 @@
+/* Estilos da aba "Tirar dúvidas" (chat). Usa as variáveis de cor do proj1.css. */
+
+/* Três abas cabem em telas pequenas: o texto quebra em duas linhas e o ícone some. */
+.aba span { text-align: center; line-height: 1.25; }
+@media (max-width: 440px) {
+  .aba { padding: 0.5rem 0.35rem; }
+  .aba i { display: none; }
+}
+
+.conversa-contexto { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--text-secondary); background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 0.65rem 0.85rem; margin-bottom: 1rem; }
+.conversa-contexto[hidden] { display: none; }
+.conversa-contexto i { color: var(--accent); font-size: 16px; margin-top: 2px; }
+.conversa-contexto strong { color: var(--text-primary); font-weight: 500; }
+
+.conversa-mensagens { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.balao { max-width: 88%; border-radius: 14px; padding: 0.75rem 0.95rem; font-size: 14.5px; line-height: 1.6; word-break: break-word; }
+.balao-texto p { margin: 0 0 0.45rem; }
+.balao-texto p:last-child { margin-bottom: 0; }
+.balao-texto ul { margin: 0.3rem 0 0.45rem; padding-left: 1.15rem; }
+.balao-texto li { margin-bottom: 0.3rem; }
+.balao-texto ul:last-child { margin-bottom: 0; }
+
+.balao-pessoa { align-self: flex-end; background: var(--accent-dark); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border)); color: var(--text-primary); border-bottom-right-radius: 4px; }
+.balao-assistente { align-self: flex-start; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-primary); border-bottom-left-radius: 4px; }
+.balao-sistema { align-self: center; max-width: 100%; font-size: 13px; color: var(--text-muted); text-align: center; padding: 0.4rem 0.6rem; }
+.balao-autor { display: block; font-size: 12px; font-weight: 500; color: var(--accent); margin-bottom: 0.3rem; }
+.balao .selo-nivel { margin-bottom: 0.5rem; }
+.balao .aviso { margin: 0.6rem 0 0; }
+.balao-nota { font-size: 12px; color: var(--text-muted); margin: 0.55rem 0 0; line-height: 1.5; }
+
+.btn-ouvir { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.6rem; min-height: 36px; padding: 0.3rem 0.7rem; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text-secondary); font: 500 13px var(--font-ui); cursor: pointer; }
+.btn-ouvir:hover { color: var(--text-primary); }
+.btn-ouvir[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.btn-ouvir:focus-visible, .sugestao:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn-ouvir i { font-size: 16px; }
+
+.conversa-pensando { display: flex; align-items: center; gap: 0.55rem; font-size: 13px; color: var(--text-muted); margin-top: 0.75rem; }
+.conversa-pensando[hidden] { display: none; }
+.pontinhos { display: inline-flex; gap: 3px; }
+.pontinhos span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0.6; }
+@media (prefers-reduced-motion: no-preference) {
+  .pontinhos span { animation: pulse 0.9s ease-in-out infinite; }
+  .pontinhos span:nth-child(2) { animation-delay: 0.15s; }
+  .pontinhos span:nth-child(3) { animation-delay: 0.3s; }
+}
+
+.conversa-sugestoes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0.2rem; }
+.conversa-sugestoes:empty { display: none; }
+.sugestao { min-height: 40px; padding: 0.45rem 0.85rem; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--border)); background: transparent; color: var(--text-primary); font: 400 13.5px var(--font-ui); cursor: pointer; text-align: left; }
+.sugestao:hover { background: var(--accent-dark); }
+.sugestao:disabled { opacity: 0.5; cursor: default; }
+
+.conversa-form { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.conversa-form textarea:disabled { opacity: 0.6; }
+
+.btn-duvidas { margin-top: 1rem; }
+
+@media (max-width: 480px) {
+  .balao { max-width: 94%; }
+}
